@@ -12,7 +12,7 @@ O Open Structural Analysis encontra-se em desenvolvimento ativo. A base de model
 
 ## Instalação e execução
 
-Requisitos: [Git](https://git-scm.com/downloads), [Python entre 3.10 e 3.13](https://www.python.org/downloads/) e [uv](https://docs.astral.sh/uv/).
+Requisitos: [Git](https://git-scm.com/downloads), [Python entre 3.12 e 3.13](https://www.python.org/downloads/) e [uv](https://docs.astral.sh/uv/).
 
 Clone o repositório e entre no diretório do projeto:
 
@@ -47,3 +47,15 @@ uv run open-structural-analysis
 ```
 
 O `git pull` baixa as alterações do GitHub e o `uv sync` atualiza o ambiente quando as dependências do projeto mudam.
+
+### Executável para Windows
+
+O workflow **Build executável Windows** (`.github/workflows/build-windows.yml`) gera
+o programa empacotado a cada push. Para usar sem instalar Python:
+
+1. Abra a aba **Actions** do repositório e escolha a execução mais recente de **Build executável Windows**.
+2. Baixe o artifact **OpenStructuralAnalysis-windows** e descompacte.
+3. Execute `OpenStructuralAnalysis.exe` (mantenha a pasta `_internal` ao lado dele).
+
+Para gerar localmente: `uv run --with pyinstaller pyinstaller --noconfirm packaging/open-structural-analysis.spec`
+(resultado em `dist/OpenStructuralAnalysis/`).

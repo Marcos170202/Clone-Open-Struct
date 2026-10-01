@@ -1,0 +1,33 @@
+name: Build executável Windows
+
+# Gera o executável num runner Windows de verdade (o PyInstaller não faz
+# compilação cruzada). Baixe o resultado em Actions > execução > Artifacts.
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Instala as dependências (uv.lock)
+        run: uv sync --python 3.13
+      - name: Gera o executável
+        run: uv run --with pyinstaller pyinstaller --noconfirm packaging/open-structural-analysis.spec
+      - name: Verifica se o executável abre
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath dist\OpenStructuralAnalysis\OpenStructuralAnalysis.exe -PassThru
+          Start-Sleep -Seconds 20
+          if ($p.HasExited) { Write-Error "O executável fechou sozinho (código $($p.ExitCode))"; exit 1 }
+          Stop-Process -Id $p.Id
+          Write-Output "Executável abriu e continuou rodando."
+      - name: Publica o artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenStructuralAnalysis-windows
+          path: dist/OpenStructuralAnalysis
+          if-no-files-found: error
